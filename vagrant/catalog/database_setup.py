@@ -1,9 +1,10 @@
 import os
 import sys
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
+import datetime
 
 Base = declarative_base()
 
@@ -33,6 +34,7 @@ class Item(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
     description = Column(String(300), nullable=False)
+    date_added = Column(DateTime, default=datetime.datetime.now)
 
     @property
     def serialize(self):
@@ -41,6 +43,7 @@ class Item(Base):
             'name': self.name,
             'id': self.id,
             'description': self.description,
+            'date_added':self.date_added,
         }
 
     print 'Item Table Created'
