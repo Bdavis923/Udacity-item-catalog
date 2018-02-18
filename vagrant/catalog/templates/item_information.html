@@ -1,0 +1,18 @@
+{% extends "home.html" %}
+{% block content %}
+<div class="background">
+  <div class="catalog">
+    <div >
+      <h2>{{item}}</h2>
+    </div>
+    <break></break>
+    <div>
+      <p>Description: {{description}}</p>
+        {% if session['logged_in'] == True %}
+          <a class="titles" href="/catalog/{{category}}/{{item}}/edit">Edit</a>
+          <a class="titles" href="/catalog/{{category}}/{{item}}/delete">Delete</a>
+        {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

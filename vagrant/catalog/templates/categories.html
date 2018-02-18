@@ -1,0 +1,19 @@
+{% extends "home.html" %}
+{% block content %}
+<div class="background">
+  <div class="catalog">
+    <div class="categories">
+      <h2>Categories</h2>
+      {% for category in categories %}
+        <p class="titles">{{category}}</p>
+      {% endfor %}
+    </div>
+    <div class="items">
+      <h2>{{header}}</h2>
+      {% for item in items%}
+        <p class="titles">{{item}}</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

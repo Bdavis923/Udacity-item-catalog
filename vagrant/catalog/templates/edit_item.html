@@ -1,0 +1,28 @@
+{% extends "home.html" %}
+{% block content %}
+<div class="background">
+  <div class="catalog">
+    <h2> Edit Item</h2>
+    <div>
+      <form action="" method = "post">
+        <div>
+          <label for="name">Title</label>
+          <input type ="text" maxlength="100" name="title" value="{{item.name}}">
+        </div>
+        <div>
+          <label for="description">Description</label>
+          <textarea class="form-control" maxlength="250" rows="3" name="description">{{item.description}}</textarea>
+        </div>
+        <div>
+          <label for="Category">Category</label>
+          <select>
+            <option value="{{category_name}}">{{category_name}}</option>
+          </select>
+          <button type="submit" name="edit" value="submit">Submit</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

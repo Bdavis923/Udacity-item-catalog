@@ -1,0 +1,16 @@
+{% extends "home.html" %}
+{% block content %}
+<div class="background">
+  <div class="catalog">
+    <h2>Delete Item</h2>
+		<p>Are you sure you want to delete {{item.name}}?</p>
+		<form action="#" method = 'post'>
+			<button type="submit" name="delete" value="delete">Delete</button>
+			<button type="submit" name="cancel" value="cancel">Cancel</button>
+		</form>
+  </div>
+</div>
+
+
+
+{% endblock %}
