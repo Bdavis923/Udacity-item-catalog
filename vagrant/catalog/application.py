@@ -24,7 +24,8 @@ CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Restaurant Menu Application"
 
-#Pulls all categories and latest items from DB and display using index.html
+
+# Pulls all categories and latest items from DB and display using index.html
 @app.route('/')
 @app.route('/catalog')
 def showCatalogs():
@@ -39,25 +40,21 @@ def showCatalogs():
     for i in latestItems:
         itemsL.append(i.name)
 
-
-
     return render_template('index.html', categories=categoryList, items=itemsL)
 
-#Pulls all items in a specific category and display them using categories.html
+
+# Pulls all items in a specific category and display them using categories.html
 @app.route('/catalog/<string:category_name>/')
 @app.route('/catalog/<string:category_name>/items')
 def showItems(category_name):
     categories = session.query(Category).all()
     categoryList = []
-
-
     for c in categories:
         categoryList.append(c.name)
 
-
-    catId = session.query(Category).filter_by(name = category_name).one()
+    catId = session.query(Category).filter_by(name=category_name).one()
     print catId.id
-    catItems = session.query(Item).filter_by(cat_id = catId.id).all()
+    catItems = session.query(Item).filter_by(cat_id=catId.id).all()
     itemsL = []
     count = 0
 
@@ -65,105 +62,109 @@ def showItems(category_name):
         itemsL.append(i.name)
         count += 1
 
-    header = category_name + ' Items '  + '( ' + str(count) + ' items)'
-    return render_template('categories.html',categories=categoryList, items = itemsL, header=header)
+    header = category_name+' Items '+'( '+str(count)+' items)'
+    return render_template('categories.html', categories=categoryList, items=itemsL, header=header)
 
-#Pulls item information and alows you to edit using edit_Item.html
+
+# Pulls item information and alows you to edit using edit_Item.html
 @app.route('/catalog/<string:category_name>/<string:item_name>')
 def itemInformation(category_name, item_name):
 
-    catId = session.query(Category).filter_by(name = category_name).one()
-    item = session.query(Item).filter_by(cat_id = catId.id, name = item_name).one()
+    catId = session.query(Category).filter_by(name=category_name).one()
+    item = session.query(Item).filter_by(cat_id=catId.id, name=item_name).one()
     description = 'Description: ' + item.description
-    return render_template('item_information.html',item=item.name, description =description, category = catId.name )
+    return render_template('item_information.html', item=item.name, description=description, category=catId.name)
 
-#Pulls item information and alows you to edit using edit_Item.html
-@app.route('/catalog/<string:category_name>/<string:item_name>/edit', methods = ['GET','POST'])
+
+# Pulls item information and alows you to edit using edit_Item.html
+@app.route('/catalog/<string:category_name>/<string:item_name>/edit', methods=['GET', 'POST'])
 def editItem(category_name, item_name):
-#    if username not in login_session:
-#        flash("You need to login")
-#        return render_template('login.html')
-#    else:
-
-    catId = session.query(Category).filter_by(name = category_name).one()
-    editItem = session.query(Item).filter_by(cat_id = catId.id, name = item_name).one()
-    if request.method == 'POST':
-        print "zzzzzzzzzzzzzzzz"
-        if request.form['edit'] == "submit":
-            print editItem.description
-            updateItem = session.query(Item).filter_by(cat_id = catId.id, name = item_name).one()
-            print "asdawer"
-            updateItem.name = request.form['title']
-            #if request.form['description']:
-            updateItem.description = request.form['description']
-            session.commit()
-            print updateItem.description
-            print "asdaweruuuuuu"
-            flash("Item change was made")
-            return render_template('item_information.html',category_name = category_name, item_name = item_name, description =editItem.description)
+    if username not in login_session:
+        flash("You need to login")
+        return render_template('login.html')
     else:
-        print "notpe"
-        return render_template('edit_Item.html', category_name = category_name, item_name = item_name, item = editItem)
+        catId = session.query(Category).filter_by(name=category_name).one()
+        editItem = session.query(Item).filter_by(cat_id=catId.id, name=item_name).one()
+        if request.method == 'POST':
+            print "zzzzzzzzzzzzzzzz"
+            if request.form['edit'] == "submit":
+                print editItem.description
+                updateItem = session.query(Item).filter_by(cat_id=catId.id, name=item_name).one()
+                print "asdawer"
+                updateItem.name = request.form['title']
+                updateItem.description = request.form['description']
+                session.commit()
+                print updateItem.description
+                print "asdaweruuuuuu"
+                flash("Item change was made")
+                return render_template('item_information.html', category_name=category_name, item_name=item_name, description=editItem.description)
+        else:
+            print "notpe"
+            return render_template('edit_Item.html', category_name=category_name, item_name=item_name, item=editItem)
 
-@app.route('/catalog/add', methods = ['GET','POST'])
+
+@app.route('/catalog/add', methods=['GET', 'POST'])
 def addItem():
-#    if username not in login_session:
-#        flash("You need to login")
-#        return render_template('login.html')
-#    else:
-    categories = session.query(Category).all()
-    categoryList = []
-    for c in categories:
-        categoryList.append(c.name)
-
-    if request.method == 'POST':
-        print "zzzzzzzzzzzzzzzz"
-        if request.form['edit'] == "submit":
-            print request.form['category']
-            catId = session.query(Category).filter_by(name = request.form['category']).one()
-            print "2"
-            item = Item(name=request.form['name'], description=request.form['description'], cat_id=catId.id)
-            print "zcc"
-            session.add(item)
-            session.commit()
-            flash("Item change was added")
-            return redirect('/catalog')
+    if username not in login_session:
+        flash("You need to login")
+        return render_template('login.html')
     else:
-        print "notpe"
-        return render_template('addItem.html', categories=categoryList)
+        categories = session.query(Category).all()
+        categoryList = []
+        for c in categories:
+            categoryList.append(c.name)
+
+        if request.method == 'POST':
+            print "zzzzzzzzzzzzzzzz"
+            if request.form['edit'] == "submit":
+                print request.form['category']
+                catId = session.query(Category).filter_by(name=request.form['category']).one()
+                print "2"
+                item = Item(name=request.form['name'], description=request.form['description'], cat_id=catId.id)
+                print "zcc"
+                session.add(item)
+                session.commit()
+                flash("Item change was added")
+                return redirect('/catalog')
+        else:
+            print "notpe"
+            return render_template('addItem.html', categories=categoryList)
 
 
-#Delete an item using delete_item.html
-@app.route('/catalog/<string:category_name>/<string:item_name>/delete', methods=['GET','POST'])
+# Delete an item using delete_item.html
+@app.route('/catalog/<string:category_name>/<string:item_name>/delete', methods=['GET', 'POST'])
 def deleteItem(category_name, item_name):
-    catId = session.query(Category).filter_by(name = category_name).one()
-    itemDelete = session.query(Item).filter_by(cat_id = catId.id, name = item_name).one()
+    catId = session.query(Category).filter_by(name=category_name).one()
+    itemDelete = session.query(Item).filter_by(cat_id=catId.id, name=item_name).one()
     if request.method == 'POST':
         if request.form['delete'] == "delete":
             session.delete(itemDelete)
             session.commit()
             flash("Item deleted")
-            return redirect (url_for('showItems', category_name = category_name))
+            return redirect(url_for('showItems', category_name=category_name))
         if request.form['cancel'] == "cancel":
 
             redirect('/catalog')
     else:
-        return render_template('delete_Item.html', item = itemDelete)
+        return render_template('delete_Item.html', item=itemDelete)
 
-#creating JSON endpoints
+
+# creating JSON endpoints
 @app.route('/catalog/JSON')
 def showCatalogJSON():
     category = session.query(Category).all()
-    return jsonify(Categories = [i.serialize for i in category])
+    return jsonify(Categories=[i.serialize for i in category])
+
 
 @app.route('/catalog/<int:category_id>/items/JSON')
 def showItemsJSON(category_id):
-    category = session.query(Category).filter_by(id = category_id).one()
-    items = session.query(Item).filter_by(cat_id = category_id).all()
+    category = session.query(Category).filter_by(id=category_id).one()
+    items = session.query(Item).filter_by(cat_id=category_id).all()
     return jsonify(Items=[i.serialize for i in items])
 
+
 # Create anti-forgery state token
-@app.route('/login', methods = ['GET','POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
@@ -182,6 +183,7 @@ def login():
 
     return render_template("login.html", error=error)
 
+
 @app.route('/logout')
 def logout():
     login_session.pop('logged_in', None)
@@ -189,6 +191,7 @@ def logout():
     login_session.pop('username', None)
     flash('You were logged out.')
     return redirect('/catalog')
+
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
@@ -267,7 +270,6 @@ def gconnect():
     login_session['state'] = state
     login_session['logged_in'] = True
 
-
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return render_template("index.html")
@@ -309,4 +311,4 @@ def gdisconnect():
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
     app.debug = True
-    app.run(host = '0.0.0.0', port=8000)
+    app.run(host='0.0.0.0', port=8000)
